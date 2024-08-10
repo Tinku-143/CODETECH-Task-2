@@ -1,0 +1,142 @@
+package com.Jaisrirama.www;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Student {
+    private String name;
+    private ArrayList<Grade> grades;
+
+    public Student(String name) {
+        this.name = name;
+        this.grades = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void addGrade(Grade grade) {
+        grades.add(grade);
+    }
+
+    public double calculateAverage() {
+        double total = 0;
+        for (Grade grade : grades) {
+            total += grade.getScore();
+        }
+        return grades.isEmpty() ? 0 : total / grades.size();
+    }
+
+    public String calculateLetterGrade(double average) {
+        if (average >= 90) {
+            return "A";
+        } else if (average >= 80) {
+            return "B";
+        } else if (average >= 70) {
+            return "C";
+        } else if (average >= 60) {
+            return "D";
+        } else {
+            return "F";
+        }
+    }
+
+    public double calculateGPA(double average) {
+        if (average >= 90) {
+            return 4.0;
+        } else if (average >= 80) {
+            return 3.0;
+        } else if (average >= 70) {
+            return 2.0;
+        } else if (average >= 60) {
+            return 1.0;
+        } else {
+            return 0.0;
+        }
+    }
+
+    public void displayReport() {
+        System.out.println("\nGrade Report for " + name);
+        for (Grade grade : grades) {
+            System.out.println(grade.getSubject() + ": " + grade.getScore());
+        }
+        double average = calculateAverage();
+        System.out.println("Average Grade: " + average);
+        System.out.println("Letter Grade: " + calculateLetterGrade(average));
+        System.out.println("GPA: " + calculateGPA(average));
+    }
+}
+
+class Grade {
+    private String subject;
+    private double score;
+
+    public Grade(String subject, double score) {
+        this.subject = subject;
+        this.score = score;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public double getScore() {
+        return score;
+    }
+}
+
+public class StudentGradeTracker {
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        Student student = createStudent();
+        enterGrades(student);
+        student.displayReport();
+    }
+
+    private static Student createStudent() {
+        System.out.print("Enter student's name: ");
+        String name = scanner.nextLine();
+        return new Student(name);
+    }
+
+    private static void enterGrades(Student student) {
+        boolean moreGrades = true;
+
+        while (moreGrades) {
+            String subject = promptForSubject();
+            double grade = promptForGrade();
+            student.addGrade(new Grade(subject, grade));
+
+            moreGrades = promptForMoreGrades();
+        }
+    }
+
+    private static String promptForSubject() {
+        System.out.print("Enter subject: ");
+        return scanner.nextLine();
+    }
+
+    private static double promptForGrade() {
+        double grade = -1;
+        while (grade < 0 || grade > 100) {
+            System.out.print("Enter grade (0-100): ");
+            try {
+                grade = Double.parseDouble(scanner.nextLine());
+                if (grade < 0 || grade > 100) {
+                    System.out.println("Invalid input. Please enter a grade between 0 and 100.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a numeric value.");
+            }
+        }
+        return grade;
+    }
+
+    private static boolean promptForMoreGrades() {
+        System.out.print("Do you want to enter another grade? (yes/no): ");
+        String choice = scanner.nextLine().trim().toLowerCase();
+        return choice.equals("yes");
+    }
+}
